@@ -39,7 +39,10 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
         )}
         
         <div className="text-xs text-muted-foreground mt-2">
-          {message.timestamp.toLocaleTimeString()}
+          {(() => {
+            const d = message.timestamp instanceof Date ? message.timestamp : new Date(message.timestamp as any);
+            return isNaN(d.getTime()) ? null : d.toLocaleTimeString();
+          })()}
         </div>
       </div>
 
