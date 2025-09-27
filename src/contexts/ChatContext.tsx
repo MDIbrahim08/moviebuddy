@@ -19,7 +19,12 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (savedMessages) {
       try {
         const parsed = JSON.parse(savedMessages);
-        setMessages(parsed);
+        // Convert timestamp strings back to Date objects
+        const messagesWithDates = parsed.map((message: any) => ({
+          ...message,
+          timestamp: new Date(message.timestamp)
+        }));
+        setMessages(messagesWithDates);
       } catch (error) {
         console.error('Error loading chat messages:', error);
       }
