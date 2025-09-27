@@ -134,7 +134,8 @@ All colors MUST be HSL.
   }
   
   .professional-button {
-    @apply shadow-button hover:shadow-lg transition-all duration-200 hover:scale-105;
+    @apply hover:shadow-lg transition-all duration-200 hover:scale-105;
+    box-shadow: var(--shadow-button);
   }
 
   /* Enhanced scrollbar styling */
