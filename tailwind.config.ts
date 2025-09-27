@@ -22,11 +22,10 @@ export default {
         glass: "hsl(var(--glass))",
         "glass-border": "hsl(var(--glass-border))",
         "glass-hover": "hsl(var(--glass-hover))",
-        "netflix-red": "hsl(var(--netflix-red))",
-        "netflix-red-dark": "hsl(var(--netflix-red-dark))",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
+          glow: "hsl(var(--primary-glow))",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -67,10 +66,12 @@ export default {
         "gradient-hero": "var(--gradient-hero)",
         "gradient-glass": "var(--gradient-glass)",
         "gradient-border": "var(--gradient-border)",
+        "gradient-futuristic": "var(--gradient-futuristic)",
       },
       boxShadow: {
         "glass": "var(--shadow-glass)",
         "glow": "var(--shadow-glow)",
+        "neon": "var(--shadow-neon)",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -79,20 +80,12 @@ export default {
       },
       keyframes: {
         "accordion-down": {
-          from: {
-            height: "0",
-          },
-          to: {
-            height: "var(--radix-accordion-content-height)",
-          },
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
-          from: {
-            height: "var(--radix-accordion-content-height)",
-          },
-          to: {
-            height: "0",
-          },
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
         },
         "float": {
           "0%, 100%": { transform: "translateY(0px)" },
@@ -106,6 +99,14 @@ export default {
           "0%": { transform: "translateY(100%)", opacity: "0" },
           "100%": { transform: "translateY(0)", opacity: "1" },
         },
+        "pulse-glow": {
+          "0%, 100%": { boxShadow: "var(--shadow-neon)" },
+          "50%": { boxShadow: "var(--shadow-glow)" },
+        },
+        "matrix": {
+          "0%": { backgroundPosition: "0% 0%" },
+          "100%": { backgroundPosition: "100% 100%" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -113,6 +114,8 @@ export default {
         "float": "float 3s ease-in-out infinite",
         "glow": "glow 2s ease-in-out infinite",
         "slide-up": "slide-up 0.3s ease-out",
+        "pulse-glow": "pulse-glow 2s ease-in-out infinite",
+        "matrix": "matrix 20s linear infinite",
       },
     },
   },

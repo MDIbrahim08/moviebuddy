@@ -3,10 +3,11 @@ import { Movie, ChatMessage as ChatMessageType, MoodType } from '@/types/movie';
 import { useMovies } from '@/contexts/MovieContext';
 import { searchMovies, getRandomMovie, getMoodBasedGenres, getMoviesByDecade } from '@/utils/movieUtils';
 import { ChatMessage } from './ChatMessage';
+import { ThemeToggle } from './ThemeToggle';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Send, Dice6, Sparkles, Heart, Zap, Baby, Clock } from 'lucide-react';
+import { Send, Dice6, Sparkles, Heart, Zap, Baby, Trash2, Bot } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 export const MovieChatbot = () => {
@@ -31,7 +32,7 @@ export const MovieChatbot = () => {
       const welcomeMessage: ChatMessageType = {
         id: 'welcome',
         type: 'bot',
-        content: "🎬 Welcome to CinemaBot! I'm your personal movie assistant with a curated collection of amazing films.\n\nI can help you find movies by:\n• Mood (\"I'm feeling romantic\")\n• Genre, Director, or Actor\n• Year or Decade (\"90s Bollywood classics\")\n• Language (Hindi, Tamil, Telugu, English)\n• Special features like \"Surprise me!\" or trivia\n\nWhat kind of movie are you in the mood for today?",
+        content: "🤖 Welcome to MovieBot! I'm your futuristic AI movie assistant with an extensive collection of amazing films.\n\nI can help you discover movies by:\n• Mood (\"I'm feeling romantic\")\n• Genre, Director, or Actor\n• Year or Decade (\"2000s blockbusters\")\n• Language (Hindi, Tamil, Telugu, English)\n• Special features like \"Surprise me!\" or movie trivia\n\nWhat kind of cinematic experience are you looking for today?",
         timestamp: new Date(),
       };
       setMessages([welcomeMessage]);
@@ -101,14 +102,14 @@ export const MovieChatbot = () => {
       responseMovies = searchMovies(movies, '', { mood: 'family' }).slice(0, 6);
       responseText = "👨‍👩‍👧‍👦 Perfect for family movie night! These films are great for all ages:";
     }
-    // Decade searches
-    else if (input.includes('90s') || input.includes('1990s') || input.includes('nineties')) {
-      responseMovies = getMoviesByDecade(movies, '1990').slice(0, 8);
-      responseText = "📼 Ah, the golden 90s! Here are some classics from that amazing decade:";
-    }
+    // Decade searches  
     else if (input.includes('2000s') || input.includes('2000') || input.includes('early 2000s')) {
       responseMovies = getMoviesByDecade(movies, '2000').slice(0, 8);
       responseText = "🎬 The 2000s brought us some incredible cinema! Check these out:";
+    }
+    else if (input.includes('2010s') || input.includes('2010') || input.includes('twenty tens')) {
+      responseMovies = getMoviesByDecade(movies, '2010').slice(0, 8);
+      responseText = "⭐ The 2010s decade of digital revolution in cinema:";
     }
     else if (input.includes('80s') || input.includes('1980s') || input.includes('eighties')) {
       responseMovies = getMoviesByDecade(movies, '1980').slice(0, 8);
@@ -179,15 +180,22 @@ export const MovieChatbot = () => {
     { label: 'Action', icon: Zap, action: () => processUserMessage('action movies') },
     { label: 'Comedy', icon: Sparkles, action: () => processUserMessage('comedy movies') },
     { label: 'Family', icon: Baby, action: () => processUserMessage('family movies') },
-    { label: '90s Classics', icon: Clock, action: () => processUserMessage('90s classics') },
   ];
+
+  const clearChat = () => {
+    setMessages([]);
+    toast({
+      title: "Chat Cleared",
+      description: "All messages have been cleared successfully.",
+    });
+  };
 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="glass-card p-8 text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-foreground">Loading movie database...</p>
+        <div className="glass-card p-8 text-center futuristic-border">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4 neon-glow"></div>
+          <p className="text-foreground text-glow">Initializing MovieBot AI...</p>
         </div>
       </div>
     );
@@ -196,28 +204,42 @@ export const MovieChatbot = () => {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Header */}
-      <header className="glass-card m-4 p-4 mb-0">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-gradient-hero flex items-center justify-center netflix-glow">
-            <Sparkles className="h-5 w-5 text-white" />
+      <header className="glass-card m-4 p-4 mb-0 futuristic-border">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-gradient-hero flex items-center justify-center neon-glow animate-pulse-glow">
+              <Bot className="h-5 w-5 text-white animate-float" />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold text-foreground text-glow">MovieBot</h1>
+              <p className="text-sm text-muted-foreground">Your Futuristic AI Movie Companion</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-xl font-bold text-foreground">CinemaBot</h1>
-            <p className="text-sm text-muted-foreground">Your AI Movie Companion</p>
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={clearChat}
+              className="glass-hover neon-glow text-destructive hover:text-destructive-foreground"
+              title="Clear all messages"
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
           </div>
         </div>
       </header>
 
       {/* Quick Actions */}
       <div className="mx-4 mb-4">
-        <div className="glass-card p-4">
-          <p className="text-sm text-muted-foreground mb-3">Quick suggestions:</p>
+        <div className="glass-card p-4 futuristic-border">
+          <p className="text-sm text-muted-foreground mb-3 text-glow">Quick AI suggestions:</p>
           <div className="flex flex-wrap gap-2">
             {quickActions.map((action, index) => (
               <Badge
                 key={index}
                 variant="secondary"
-                className="cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors flex items-center gap-1"
+                className="cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors flex items-center gap-1 neon-glow"
                 onClick={action.action}
               >
                 <action.icon className="h-3 w-3" />
@@ -236,10 +258,10 @@ export const MovieChatbot = () => {
           ))}
           {isProcessing && (
             <div className="flex justify-start mb-6">
-              <div className="glass-card p-4">
+              <div className="glass-card p-4 futuristic-border">
                 <div className="flex items-center gap-2">
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
-                  <span className="text-muted-foreground">Searching movies...</span>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary neon-glow"></div>
+                  <span className="text-muted-foreground text-glow">AI analyzing movies...</span>
                 </div>
               </div>
             </div>
@@ -251,19 +273,19 @@ export const MovieChatbot = () => {
       {/* Input */}
       <div className="p-4">
         <div className="max-w-4xl mx-auto">
-          <form onSubmit={handleSubmit} className="glass-card p-4">
+          <form onSubmit={handleSubmit} className="glass-card p-4 futuristic-border">
             <div className="flex gap-2">
               <Input
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
-                placeholder="Ask me about movies... (e.g., 'romantic movies', 'surprise me', '90s Bollywood')"
-                className="flex-1 bg-input"
+                placeholder="Ask MovieBot about films... (e.g., 'futuristic movies', 'surprise me', '2000s blockbusters')"
+                className="flex-1 bg-input neon-glow"
                 disabled={isProcessing}
               />
               <Button
                 type="submit"
                 disabled={!inputValue.trim() || isProcessing}
-                className="netflix-glow"
+                className="neon-glow animate-pulse-glow"
               >
                 <Send className="h-4 w-4" />
               </Button>

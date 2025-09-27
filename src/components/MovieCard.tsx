@@ -14,9 +14,9 @@ export const MovieCard = ({ movie, className = "" }: MovieCardProps) => {
   const year = movie.release_date.split('-')[0];
 
   return (
-    <div className={`glass-card glass-hover group p-4 max-w-sm w-full ${className}`}>
+    <div className={`glass-card glass-hover futuristic-border group p-4 max-w-sm w-full animate-slide-up ${className}`}>
       {/* Movie Poster */}
-      <div className="relative mb-4 overflow-hidden rounded-lg">
+      <div className="relative mb-4 overflow-hidden rounded-lg neon-glow">
         <img
           src={getFullPosterUrl(movie.poster_path)}
           alt={`${movie.title} poster`}
@@ -30,10 +30,10 @@ export const MovieCard = ({ movie, className = "" }: MovieCardProps) => {
         
         {/* Rating Badge */}
         {movie.vote_average > 0 && (
-          <div className="absolute top-2 right-2 glass-card px-2 py-1">
+          <div className="absolute top-2 right-2 glass-card px-2 py-1 neon-glow">
             <div className="flex items-center gap-1 text-xs">
-              <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-              <span className="text-foreground font-medium">{movie.vote_average.toFixed(1)}</span>
+              <Star className="h-3 w-3 fill-primary text-primary animate-glow" />
+              <span className="text-foreground font-medium text-glow">{movie.vote_average.toFixed(1)}</span>
             </div>
           </div>
         )}
@@ -93,14 +93,14 @@ export const MovieCard = ({ movie, className = "" }: MovieCardProps) => {
         {/* Watch Button */}
         <Button
           asChild
-          className="w-full netflix-glow hover:scale-105 transition-all duration-300"
+          className="w-full neon-glow hover:scale-105 transition-all duration-300 animate-pulse-glow futuristic-border"
           variant="default"
         >
           <a
             href={getWatchUrl(movie)}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 text-glow"
           >
             <span>🔗 Watch Now</span>
             <ExternalLink className="h-4 w-4" />
