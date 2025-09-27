@@ -1,8 +1,9 @@
 import { Movie } from '@/types/movie';
-import { getFullPosterUrl, getWatchUrl, getTags } from '@/utils/movieUtils';
+import { getFullPosterUrl, getTags } from '@/utils/movieUtils';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ExternalLink, Calendar, User, Star } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 interface MovieCardProps {
   movie: Movie;
@@ -96,15 +97,13 @@ export const MovieCard = ({ movie, className = "" }: MovieCardProps) => {
           className="w-full professional-button hover:scale-105 transition-all duration-300"
           variant="default"
         >
-          <a
-            href={getWatchUrl(movie)}
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            to={`/watch/${movie.id}`}
             className="flex items-center gap-2"
           >
             <span>🔗 Watch Now</span>
             <ExternalLink className="h-4 w-4" />
-          </a>
+          </Link>
         </Button>
       </div>
     </div>
