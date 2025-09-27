@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Movie, ChatMessage as ChatMessageType, MoodType } from '@/types/movie';
 import { useMovies } from '@/contexts/MovieContext';
+import { useChat } from '@/contexts/ChatContext';
 import { searchMovies, getRandomMovie, getMoodBasedGenres, getMoviesByDecade } from '@/utils/movieUtils';
 import { ChatMessage } from './ChatMessage';
 import { ThemeToggle } from './ThemeToggle';
@@ -12,7 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 
 export const MovieChatbot = () => {
   const { movies, loading } = useMovies();
-  const [messages, setMessages] = useState<ChatMessageType[]>([]);
+  const { messages, setMessages, addMessage, clearMessages } = useChat();
   const [inputValue, setInputValue] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -27,8 +28,8 @@ export const MovieChatbot = () => {
   }, [messages]);
 
   useEffect(() => {
-    if (!loading && movies.length > 0) {
-      // Welcome message
+    if (!loading && movies.length > 0 && messages.length === 0) {
+      // Welcome message - only show if no messages exist
       const welcomeMessage: ChatMessageType = {
         id: 'welcome',
         type: 'bot',
@@ -37,7 +38,7 @@ export const MovieChatbot = () => {
       };
       setMessages([welcomeMessage]);
     }
-  }, [loading, movies]);
+  }, [loading, movies, messages.length, setMessages]);
 
   const processUserMessage = async (userInput: string) => {
     if (!userInput.trim()) return;
@@ -49,12 +50,12 @@ export const MovieChatbot = () => {
       timestamp: new Date(),
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    addMessage(userMessage);
     setIsProcessing(true);
 
     try {
       const response = await generateBotResponse(userInput);
-      setMessages(prev => [...prev, response]);
+      addMessage(response);
     } catch (error) {
       toast({
         title: "Error",
@@ -183,6 +184,7 @@ export const MovieChatbot = () => {
   ];
 
   const clearChat = () => {
+    clearMessages();
     const welcomeMessage: ChatMessageType = {
       id: 'welcome',
       type: 'bot',

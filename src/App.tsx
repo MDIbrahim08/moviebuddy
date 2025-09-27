@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import WatchSuggestions from "./pages/WatchSuggestions";
 import { MovieProvider } from "@/contexts/MovieContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
+import { ChatProvider } from "@/contexts/ChatContext";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -16,16 +17,18 @@ const App = () => (
     <TooltipProvider>
       <ThemeProvider>
         <MovieProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/watch/:movieId" element={<WatchSuggestions />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
+          <ChatProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/watch/:movieId" element={<WatchSuggestions />} />
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </ChatProvider>
         </MovieProvider>
       </ThemeProvider>
     </TooltipProvider>
