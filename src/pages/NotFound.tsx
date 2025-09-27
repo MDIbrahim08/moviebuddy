@@ -12,10 +12,10 @@ const NotFound = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center">
-      <div className="glass-card p-8 text-center max-w-md futuristic-border">
+      <div className="glass-card p-8 text-center max-w-md">
         <div className="mb-6">
-          <Film className="h-16 w-16 text-primary mx-auto mb-4 animate-float neon-glow" />
-          <h1 className="text-4xl font-bold text-foreground mb-2 text-glow">404</h1>
+          <Film className="h-16 w-16 text-primary mx-auto mb-4" />
+          <h1 className="text-4xl font-bold text-foreground mb-2">404</h1>
           <p className="text-xl text-muted-foreground">This page seems to be missing from our database!</p>
         </div>
         
@@ -23,7 +23,7 @@ const NotFound = () => {
           The page you're looking for doesn't exist. But don't worry, there are plenty of great movies to discover!
         </p>
         
-        <Button asChild className="neon-glow animate-pulse-glow">
+        <Button asChild className="professional-button">
           <a href="/" className="flex items-center gap-2">
             <Home className="h-4 w-4" />
             Back to MovieBot

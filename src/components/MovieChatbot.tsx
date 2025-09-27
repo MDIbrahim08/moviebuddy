@@ -183,7 +183,13 @@ export const MovieChatbot = () => {
   ];
 
   const clearChat = () => {
-    setMessages([]);
+    const welcomeMessage: ChatMessageType = {
+      id: 'welcome',
+      type: 'bot',
+      content: "🤖 Welcome to MovieBot! I'm your AI movie assistant with an extensive collection of amazing films.\n\nI can help you discover movies by:\n• Mood (\"I'm feeling romantic\")\n• Genre, Director, or Actor\n• Year or Decade (\"2000s blockbusters\")\n• Language (Hindi, Tamil, Telugu, English)\n• Special features like \"Surprise me!\" or movie trivia\n\nWhat kind of cinematic experience are you looking for today?",
+      timestamp: new Date(),
+    };
+    setMessages([welcomeMessage]);
     toast({
       title: "Chat Cleared",
       description: "All messages have been cleared successfully.",
@@ -193,9 +199,9 @@ export const MovieChatbot = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="glass-card p-8 text-center futuristic-border">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4 neon-glow"></div>
-          <p className="text-foreground text-glow">Initializing MovieBot AI...</p>
+        <div className="glass-card p-8 text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-foreground">Loading MovieBot...</p>
         </div>
       </div>
     );
@@ -204,15 +210,15 @@ export const MovieChatbot = () => {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Header */}
-      <header className="glass-card m-4 p-4 mb-0 futuristic-border">
+      <header className="glass-card m-4 p-4 mb-0">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-hero flex items-center justify-center neon-glow animate-pulse-glow">
-              <Bot className="h-5 w-5 text-white animate-float" />
+            <div className="w-10 h-10 rounded-full bg-gradient-hero flex items-center justify-center">
+              <Bot className="h-5 w-5 text-white" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-foreground text-glow">MovieBot</h1>
-              <p className="text-sm text-muted-foreground">Your Futuristic AI Movie Companion</p>
+              <h1 className="text-xl font-bold text-foreground">MovieBot</h1>
+              <p className="text-sm text-muted-foreground">Your AI Movie Companion</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -221,7 +227,7 @@ export const MovieChatbot = () => {
               variant="ghost"
               size="sm"
               onClick={clearChat}
-              className="glass-hover neon-glow text-destructive hover:text-destructive-foreground"
+              className="glass-hover text-destructive hover:text-destructive-foreground hover:bg-destructive/10"
               title="Clear all messages"
             >
               <Trash2 className="h-4 w-4" />
@@ -232,14 +238,14 @@ export const MovieChatbot = () => {
 
       {/* Quick Actions */}
       <div className="mx-4 mb-4">
-        <div className="glass-card p-4 futuristic-border">
-          <p className="text-sm text-muted-foreground mb-3 text-glow">Quick AI suggestions:</p>
+        <div className="glass-card p-4">
+          <p className="text-sm text-muted-foreground mb-3">Quick suggestions:</p>
           <div className="flex flex-wrap gap-2">
             {quickActions.map((action, index) => (
               <Badge
                 key={index}
                 variant="secondary"
-                className="cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors flex items-center gap-1 neon-glow"
+                className="cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors flex items-center gap-1 professional-button"
                 onClick={action.action}
               >
                 <action.icon className="h-3 w-3" />
@@ -258,10 +264,10 @@ export const MovieChatbot = () => {
           ))}
           {isProcessing && (
             <div className="flex justify-start mb-6">
-              <div className="glass-card p-4 futuristic-border">
+              <div className="glass-card p-4">
                 <div className="flex items-center gap-2">
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary neon-glow"></div>
-                  <span className="text-muted-foreground text-glow">AI analyzing movies...</span>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                  <span className="text-muted-foreground">Searching movies...</span>
                 </div>
               </div>
             </div>
@@ -273,19 +279,19 @@ export const MovieChatbot = () => {
       {/* Input */}
       <div className="p-4">
         <div className="max-w-4xl mx-auto">
-          <form onSubmit={handleSubmit} className="glass-card p-4 futuristic-border">
+          <form onSubmit={handleSubmit} className="glass-card p-4">
             <div className="flex gap-2">
               <Input
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
-                placeholder="Ask MovieBot about films... (e.g., 'futuristic movies', 'surprise me', '2000s blockbusters')"
-                className="flex-1 bg-input neon-glow"
+                placeholder="Ask MovieBot about films... (e.g., 'romantic movies', 'surprise me', '2000s blockbusters')"
+                className="flex-1 bg-input"
                 disabled={isProcessing}
               />
               <Button
                 type="submit"
                 disabled={!inputValue.trim() || isProcessing}
-                className="neon-glow animate-pulse-glow"
+                className="professional-button"
               >
                 <Send className="h-4 w-4" />
               </Button>

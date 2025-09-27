@@ -10,13 +10,13 @@ export const ThemeToggle = () => {
       variant="ghost"
       size="sm"
       onClick={toggleTheme}
-      className="glass-hover neon-glow animate-pulse-glow"
+      className="glass-hover professional-button"
       title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
     >
       {theme === 'dark' ? (
-        <Sun className="h-4 w-4 text-primary animate-glow" />
+        <Sun className="h-4 w-4 text-primary" />
       ) : (
-        <Moon className="h-4 w-4 text-primary animate-glow" />
+        <Moon className="h-4 w-4 text-primary" />
       )}
     </Button>
   );
