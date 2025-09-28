@@ -33,7 +33,7 @@ export const MovieChatbot = () => {
       const welcomeMessage: ChatMessageType = {
         id: 'welcome',
         type: 'bot',
-        content: "🤖 Welcome to MovieBot! I'm your futuristic AI movie assistant with an extensive collection of amazing films.\n\nI can help you discover movies by:\n• Mood (\"I'm feeling romantic\")\n• Genre, Director, or Actor\n• Year or Decade (\"2000s blockbusters\")\n• Language (Hindi, Tamil, Telugu, English)\n• Special features like \"Surprise me!\" or movie trivia\n\nWhat kind of cinematic experience are you looking for today?",
+        content: "🤖 Welcome to MovieBot! I'm your AI movie assistant with an extensive collection of amazing films.\n\nI can help you with:\n📽️ Movie Discovery:\n• Mood (\"I'm feeling romantic\")\n• Genre, Director, or Actor\n• Year or Decade (\"2000s blockbusters\")\n• Language (Hindi, Tamil, Telugu, English)\n\n❓ Movie Questions:\n• \"Who directed Inception?\"\n• \"Who are the actors in Avengers?\"\n• \"What genre is Titanic?\"\n• \"When was Avatar released?\"\n• \"What is Interstellar about?\"\n• \"What's the rating of The Dark Knight?\"\n\n🎲 Special Features:\n• \"Surprise me!\" for random picks\n\nWhat would you like to know about movies today?",
         timestamp: new Date(),
       };
       setMessages([welcomeMessage]);
@@ -72,8 +72,107 @@ export const MovieChatbot = () => {
     let responseMovies: Movie[] = [];
     let responseText = '';
 
+    // Question-based queries about specific movies
+    if (input.includes('who is the director') || input.includes('who directed') || input.includes('director of')) {
+      // Extract movie name from question
+      const movieMatch = input.match(/(?:who (?:is the )?director|who directed|director) (?:of )?(?:the )?(.+?)(?:\?|$)/);
+      if (movieMatch && movieMatch[1]) {
+        const movieName = movieMatch[1].trim();
+        const foundMovies = searchMovies(movies, movieName);
+        if (foundMovies.length > 0) {
+          const movie = foundMovies[0];
+          responseMovies = [movie];
+          responseText = `🎬 "${movie.title}" was directed by ${movie.director}.`;
+        } else {
+          responseText = `Sorry, I couldn't find a movie called "${movieName}" in my database. Try asking about a different movie or browse my collection!`;
+        }
+      } else {
+        responseText = "Please specify which movie you'd like to know the director of. For example: 'Who directed Inception?'";
+      }
+    }
+    else if (input.includes('who are the actors') || input.includes('who stars') || input.includes('cast of') || input.includes('actors in')) {
+      const movieMatch = input.match(/(?:who (?:are the )?(?:actors|stars)|cast|actors) (?:of |in )?(?:the )?(.+?)(?:\?|$)/);
+      if (movieMatch && movieMatch[1]) {
+        const movieName = movieMatch[1].trim();
+        const foundMovies = searchMovies(movies, movieName);
+        if (foundMovies.length > 0) {
+          const movie = foundMovies[0];
+          responseMovies = [movie];
+          responseText = `⭐ The cast of "${movie.title}" includes: ${movie.cast}`;
+        } else {
+          responseText = `Sorry, I couldn't find a movie called "${movieName}" in my database. Try asking about a different movie!`;
+        }
+      } else {
+        responseText = "Please specify which movie you'd like to know the cast of. For example: 'Who are the actors in Avengers?'";
+      }
+    }
+    else if (input.includes('what genre') || input.includes('genre of') || input.includes('what type of movie')) {
+      const movieMatch = input.match(/(?:what (?:genre|type)|genre) (?:of |is )?(?:the )?(.+?)(?:\?|$)/);
+      if (movieMatch && movieMatch[1]) {
+        const movieName = movieMatch[1].trim();
+        const foundMovies = searchMovies(movies, movieName);
+        if (foundMovies.length > 0) {
+          const movie = foundMovies[0];
+          responseMovies = [movie];
+          responseText = `🎭 "${movie.title}" is a ${movie.genres} movie.`;
+        } else {
+          responseText = `Sorry, I couldn't find a movie called "${movieName}" in my database. Try asking about a different movie!`;
+        }
+      } else {
+        responseText = "Please specify which movie you'd like to know the genre of. For example: 'What genre is Inception?'";
+      }
+    }
+    else if (input.includes('when was') && (input.includes('released') || input.includes('made'))) {
+      const movieMatch = input.match(/when was (?:the )?(.+?) (?:released|made)(?:\?|$)/);
+      if (movieMatch && movieMatch[1]) {
+        const movieName = movieMatch[1].trim();
+        const foundMovies = searchMovies(movies, movieName);
+        if (foundMovies.length > 0) {
+          const movie = foundMovies[0];
+          responseMovies = [movie];
+          const year = new Date(movie.release_date).getFullYear();
+          responseText = `📅 "${movie.title}" was released in ${year}.`;
+        } else {
+          responseText = `Sorry, I couldn't find a movie called "${movieName}" in my database. Try asking about a different movie!`;
+        }
+      } else {
+        responseText = "Please specify which movie you'd like to know the release date of. For example: 'When was Titanic released?'";
+      }
+    }
+    else if (input.includes('what is') && (input.includes('about') || input.includes('plot') || input.includes('story'))) {
+      const movieMatch = input.match(/what is (?:the )?(.+?) about(?:\?|$)/);
+      if (movieMatch && movieMatch[1]) {
+        const movieName = movieMatch[1].trim();
+        const foundMovies = searchMovies(movies, movieName);
+        if (foundMovies.length > 0) {
+          const movie = foundMovies[0];
+          responseMovies = [movie];
+          responseText = `📖 "${movie.title}" is about: ${movie.overview}`;
+        } else {
+          responseText = `Sorry, I couldn't find a movie called "${movieName}" in my database. Try asking about a different movie!`;
+        }
+      } else {
+        responseText = "Please specify which movie you'd like to know about. For example: 'What is Inception about?'";
+      }
+    }
+    else if (input.includes('rating of') || input.includes('how good is') || input.includes('movie rating')) {
+      const movieMatch = input.match(/(?:rating of|how good is) (?:the )?(.+?)(?:\?|$)/);
+      if (movieMatch && movieMatch[1]) {
+        const movieName = movieMatch[1].trim();
+        const foundMovies = searchMovies(movies, movieName);
+        if (foundMovies.length > 0) {
+          const movie = foundMovies[0];
+          responseMovies = [movie];
+          responseText = `⭐ "${movie.title}" has a rating of ${movie.vote_average}/10 based on ${movie.vote_count} votes.`;
+        } else {
+          responseText = `Sorry, I couldn't find a movie called "${movieName}" in my database. Try asking about a different movie!`;
+        }
+      } else {
+        responseText = "Please specify which movie you'd like to know the rating of. For example: 'What's the rating of Inception?'";
+      }
+    }
     // Surprise me feature
-    if (input.includes('surprise me') || input.includes('random')) {
+    else if (input.includes('surprise me') || input.includes('random')) {
       const randomMovie = getRandomMovie(movies);
       if (randomMovie) {
         responseMovies = [randomMovie];
@@ -188,7 +287,7 @@ export const MovieChatbot = () => {
     const welcomeMessage: ChatMessageType = {
       id: 'welcome',
       type: 'bot',
-      content: "🤖 Welcome to MovieBot! I'm your AI movie assistant with an extensive collection of amazing films.\n\nI can help you discover movies by:\n• Mood (\"I'm feeling romantic\")\n• Genre, Director, or Actor\n• Year or Decade (\"2000s blockbusters\")\n• Language (Hindi, Tamil, Telugu, English)\n• Special features like \"Surprise me!\" or movie trivia\n\nWhat kind of cinematic experience are you looking for today?",
+      content: "🤖 Welcome to MovieBot! I'm your AI movie assistant with an extensive collection of amazing films.\n\nI can help you with:\n📽️ Movie Discovery:\n• Mood (\"I'm feeling romantic\")\n• Genre, Director, or Actor\n• Year or Decade (\"2000s blockbusters\")\n• Language (Hindi, Tamil, Telugu, English)\n\n❓ Movie Questions:\n• \"Who directed Inception?\"\n• \"Who are the actors in Avengers?\"\n• \"What genre is Titanic?\"\n• \"When was Avatar released?\"\n• \"What is Interstellar about?\"\n• \"What's the rating of The Dark Knight?\"\n\n🎲 Special Features:\n• \"Surprise me!\" for random picks\n\nWhat would you like to know about movies today?",
       timestamp: new Date(),
     };
     setMessages([welcomeMessage]);
@@ -286,7 +385,7 @@ export const MovieChatbot = () => {
               <Input
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
-                placeholder="Ask MovieBot about films... (e.g., 'romantic movies', 'surprise me', '2000s blockbusters')"
+                placeholder="Ask MovieBot anything... (e.g., 'Who directed Inception?', 'romantic movies', 'surprise me')"
                 className="flex-1 bg-input"
                 disabled={isProcessing}
               />
