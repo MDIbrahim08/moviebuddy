@@ -17,21 +17,21 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
         </div>
       )}
       
-      <div className={`max-w-4xl ${message.type === 'user' ? 'order-1' : ''}`}>
-        <div className={`glass-card p-4 ${message.type === 'user' ? 'bg-primary/10' : ''}`}>
-          <p className="text-foreground whitespace-pre-wrap">{message.content}</p>
+      <div className={`w-full max-w-[95vw] sm:max-w-2xl md:max-w-3xl lg:max-w-4xl ${message.type === 'user' ? 'order-1' : ''}`}>
+        <div className={`glass-card p-3 sm:p-4 ${message.type === 'user' ? 'bg-primary/10' : ''}`}>
+          <p className="text-foreground whitespace-pre-wrap text-sm sm:text-base">{message.content}</p>
         </div>
         
         {message.movies && message.movies.length > 0 && (
-          <div className="mt-4">
+          <div className="mt-3 sm:mt-4 w-full overflow-x-hidden">
             {message.movies.length === 1 ? (
-              <div className="flex justify-center">
-                <MovieCard movie={message.movies[0]} />
+              <div className="flex justify-center w-full">
+                <MovieCard movie={message.movies[0]} className="w-full sm:w-auto" />
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 w-full">
                 {message.movies.map((movie, index) => (
-                  <MovieCard key={`${movie.id}-${index}`} movie={movie} />
+                  <MovieCard key={`${movie.id}-${index}`} movie={movie} className="w-full" />
                 ))}
               </div>
             )}

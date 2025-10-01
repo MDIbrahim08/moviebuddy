@@ -15,7 +15,7 @@ export const MovieCard = ({ movie, className = "" }: MovieCardProps) => {
   const year = movie.release_date.split('-')[0];
 
   return (
-    <div className={`glass-card glass-hover group p-4 max-w-sm w-full ${className}`}>
+    <div className={`glass-card glass-hover group p-3 sm:p-4 max-w-sm mx-auto ${className}`}>
       {/* Movie Poster */}
       <div className="relative mb-4 overflow-hidden rounded-lg">
         <img
