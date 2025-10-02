@@ -17,7 +17,7 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
         </div>
       )}
       
-      <div className={`w-full max-w-[95vw] sm:max-w-2xl md:max-w-3xl lg:max-w-4xl ${message.type === 'user' ? 'order-1' : ''}`}>
+      <div className={`w-full max-w-full sm:max-w-2xl md:max-w-3xl lg:max-w-4xl ${message.type === 'user' ? 'order-1' : ''}`}>
         <div className={`glass-card p-3 sm:p-4 ${message.type === 'user' ? 'bg-primary/10' : ''}`}>
           <p className="text-foreground whitespace-pre-wrap text-sm sm:text-base">{message.content}</p>
         </div>
@@ -29,11 +29,20 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
                 <MovieCard movie={message.movies[0]} className="w-full sm:w-auto" />
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 w-full">
-                {message.movies.map((movie, index) => (
-                  <MovieCard key={`${movie.id}-${index}`} movie={movie} className="w-full" />
-                ))}
-              </div>
+              <>
+                <div className="sm:hidden w-full overflow-x-auto -mx-1 px-1">
+                  <div className="flex gap-3 w-full snap-x snap-mandatory">
+                    {message.movies.map((movie, index) => (
+                      <MovieCard key={`${movie.id}-${index}`} movie={movie} className="min-w-[85%] snap-center" />
+                    ))}
+                  </div>
+                </div>
+                <div className="hidden sm:grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 w-full">
+                  {message.movies.map((movie, index) => (
+                    <MovieCard key={`${movie.id}-${index}`} movie={movie} className="w-full" />
+                  ))}
+                </div>
+              </>
             )}
           </div>
         )}
