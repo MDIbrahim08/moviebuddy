@@ -5,7 +5,7 @@ const TMDB_IMAGE_BASE = 'https://image.tmdb.org/t/p/w500';
 
 export const parseMovieData = async (): Promise<Movie[]> => {
   try {
-    const response = await fetch('/src/data/movies.csv');
+    const response = await fetch('/movies.csv');
     const csvText = await response.text();
     
     return new Promise((resolve) => {
