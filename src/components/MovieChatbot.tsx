@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Send, Dice6, Sparkles, Heart, Zap, Baby, Trash2, Bot } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 export const MovieChatbot = () => {
   const { movies, loading } = useMovies();
@@ -33,7 +34,7 @@ export const MovieChatbot = () => {
       const welcomeMessage: ChatMessageType = {
         id: 'welcome',
         type: 'bot',
-        content: "🤖 Welcome to MovieBot! I'm your AI movie assistant with an extensive collection of amazing films.\n\nI can help you with:\n📽️ Movie Discovery:\n• Mood (\"I'm feeling romantic\")\n• Genre, Director, or Actor\n• Year or Decade (\"2000s blockbusters\")\n• Language (Hindi, Tamil, Telugu, English)\n\n❓ Movie Questions:\n• \"Who directed Inception?\"\n• \"Who are the actors in Avengers?\"\n• \"What genre is Titanic?\"\n• \"When was Avatar released?\"\n• \"What is Interstellar about?\"\n• \"What's the rating of The Dark Knight?\"\n\n🎲 Special Features:\n• \"Surprise me!\" for random picks\n\nWhat would you like to know about movies today?",
+      content: "🤖 Welcome to MovieBot! I'm your AI movie assistant with an extensive collection of amazing films.\n\nI can help you with:\n📽️ Movie Discovery:\n• Mood (\"I'm feeling romantic\")\n• Genre, Director, or Actor\n• Year or Decade (\"2000s blockbusters\")\n• Language (Hindi, Tamil, Telugu, English)\n\n❓ Movie Questions:\n• \"Who directed Inception?\"\n• \"Who are the actors in Avengers?\"\n• \"What genre is Titanic?\"\n• \"When was Avatar released?\"\n• \"What is Interstellar about?\"\n• \"What's the rating of The Dark Knight?\"\n\n🎬 Plot Suggestions:\n• \"Suggest plot ideas for sci-fi\"\n• \"Give me thriller storylines\"\n\n🎲 Special Features:\n• \"Surprise me!\" for random picks\n• Ask me anything about movies!\n\nWhat would you like to know about movies today?",
         timestamp: new Date(),
       };
       setMessages([welcomeMessage]);
@@ -71,6 +72,32 @@ export const MovieChatbot = () => {
     const input = userInput.toLowerCase();
     let responseMovies: Movie[] = [];
     let responseText = '';
+
+    // Check if user is asking for plot suggestions
+    if (input.includes('plot') && (input.includes('suggest') || input.includes('idea') || input.includes('storyline'))) {
+      try {
+        const { data, error } = await supabase.functions.invoke('movie-chat', {
+          body: { 
+            userMessage: userInput,
+            requestType: 'plot-suggestion'
+          }
+        });
+
+        if (error) throw error;
+        
+        responseText = data.message || "I'd be happy to suggest some plot ideas! Could you specify a genre or theme?";
+      } catch (error) {
+        console.error('Error getting plot suggestions:', error);
+        responseText = "I'm having trouble generating plot suggestions right now. Please try again!";
+      }
+
+      return {
+        id: Date.now().toString(),
+        type: 'bot',
+        content: responseText,
+        timestamp: new Date(),
+      };
+    }
 
     // Question-based queries about specific movies
     if (input.includes('who is the director') || input.includes('who directed') || input.includes('director of')) {
@@ -255,7 +282,30 @@ export const MovieChatbot = () => {
       if (responseMovies.length > 0) {
         responseText = `🔍 Found ${responseMovies.length} movie(s) matching "${userInput}":`;
       } else {
-        responseText = `Sorry, I couldn't find any movies matching "${userInput}". Try searching by genre, mood, language, or decade!`;
+        // If no movies found in local database, try AI assistant
+        try {
+          const conversationHistory = messages
+            .slice(-4)
+            .map(msg => ({
+              role: msg.type === 'user' ? 'user' : 'assistant',
+              content: msg.content
+            }));
+
+          const { data, error } = await supabase.functions.invoke('movie-chat', {
+            body: { 
+              userMessage: userInput,
+              conversationHistory,
+              requestType: 'general'
+            }
+          });
+
+          if (error) throw error;
+          
+          responseText = data.message || `Sorry, I couldn't find any movies matching "${userInput}". Try searching by genre, mood, language, or decade!`;
+        } catch (error) {
+          console.error('Error getting AI response:', error);
+          responseText = `Sorry, I couldn't find any movies matching "${userInput}". Try searching by genre, mood, language, or decade!`;
+        }
       }
     }
 
@@ -287,7 +337,7 @@ export const MovieChatbot = () => {
     const welcomeMessage: ChatMessageType = {
       id: 'welcome',
       type: 'bot',
-      content: "🤖 Welcome to MovieBot! I'm your AI movie assistant with an extensive collection of amazing films.\n\nI can help you with:\n📽️ Movie Discovery:\n• Mood (\"I'm feeling romantic\")\n• Genre, Director, or Actor\n• Year or Decade (\"2000s blockbusters\")\n• Language (Hindi, Tamil, Telugu, English)\n\n❓ Movie Questions:\n• \"Who directed Inception?\"\n• \"Who are the actors in Avengers?\"\n• \"What genre is Titanic?\"\n• \"When was Avatar released?\"\n• \"What is Interstellar about?\"\n• \"What's the rating of The Dark Knight?\"\n\n🎲 Special Features:\n• \"Surprise me!\" for random picks\n\nWhat would you like to know about movies today?",
+      content: "🤖 Welcome to MovieBot! I'm your AI movie assistant with an extensive collection of amazing films.\n\nI can help you with:\n📽️ Movie Discovery:\n• Mood (\"I'm feeling romantic\")\n• Genre, Director, or Actor\n• Year or Decade (\"2000s blockbusters\")\n• Language (Hindi, Tamil, Telugu, English)\n\n❓ Movie Questions:\n• \"Who directed Inception?\"\n• \"Who are the actors in Avengers?\"\n• \"What genre is Titanic?\"\n• \"When was Avatar released?\"\n• \"What is Interstellar about?\"\n• \"What's the rating of The Dark Knight?\"\n\n🎬 Plot Suggestions:\n• \"Suggest plot ideas for sci-fi\"\n• \"Give me thriller storylines\"\n\n🎲 Special Features:\n• \"Surprise me!\" for random picks\n• Ask me anything about movies!\n\nWhat would you like to know about movies today?",
       timestamp: new Date(),
     };
     setMessages([welcomeMessage]);
