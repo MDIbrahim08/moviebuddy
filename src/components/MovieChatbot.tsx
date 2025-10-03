@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Movie, ChatMessage as ChatMessageType, MoodType } from '@/types/movie';
 import { useMovies } from '@/contexts/MovieContext';
 import { useChat } from '@/contexts/ChatContext';
-import { searchMovies, getRandomMovie, getMoodBasedGenres, getMoviesByDecade } from '@/utils/movieUtils';
+import { searchMovies, getRandomMovie, getMoodBasedGenres, getMoviesByDecade, getRecommendations } from '@/utils/movieUtils';
 import { ChatMessage } from './ChatMessage';
 import { ThemeToggle } from './ThemeToggle';
 import { Button } from '@/components/ui/button';
@@ -14,7 +14,7 @@ import { supabase } from '@/integrations/supabase/client';
 
 export const MovieChatbot = () => {
   const { movies, loading } = useMovies();
-  const { messages, setMessages, addMessage, clearMessages } = useChat();
+  const { messages, setMessages, addMessage, clearMessages, searchHistory, addToSearchHistory } = useChat();
   const [inputValue, setInputValue] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -280,7 +280,17 @@ export const MovieChatbot = () => {
     else {
       responseMovies = searchMovies(movies, userInput).slice(0, 8);
       if (responseMovies.length > 0) {
+        addToSearchHistory(userInput);
         responseText = `🔍 Found ${responseMovies.length} movie(s) matching "${userInput}":`;
+        
+        // Add recommendations based on search
+        const recommendations = getRecommendations(movies, [userInput, ...searchHistory]);
+        if (recommendations.length > 0) {
+          const recommendationText = `\n\n💡 You might also like these based on your search:`;
+          const combinedMovies = [...responseMovies, ...recommendations.slice(0, 4)];
+          responseMovies = Array.from(new Map(combinedMovies.map(m => [m.id, m])).values()).slice(0, 10);
+          responseText += recommendationText;
+        }
       } else {
         // If no movies found in local database, try AI assistant
         try {

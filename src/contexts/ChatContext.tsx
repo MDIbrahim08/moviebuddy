@@ -6,12 +6,15 @@ interface ChatContextType {
   setMessages: React.Dispatch<React.SetStateAction<ChatMessageType[]>>;
   addMessage: (message: ChatMessageType) => void;
   clearMessages: () => void;
+  searchHistory: string[];
+  addToSearchHistory: (query: string) => void;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
 export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [messages, setMessages] = useState<ChatMessageType[]>([]);
+  const [searchHistory, setSearchHistory] = useState<string[]>([]);
 
   // Load messages from sessionStorage on mount
   useEffect(() => {
@@ -47,8 +50,22 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     sessionStorage.removeItem('moviebot-chat-messages');
   };
 
+  const addToSearchHistory = (query: string) => {
+    setSearchHistory((prev) => {
+      const updated = [query, ...prev.filter(q => q !== query)].slice(0, 10);
+      return updated;
+    });
+  };
+
   return (
-    <ChatContext.Provider value={{ messages, setMessages, addMessage, clearMessages }}>
+    <ChatContext.Provider value={{ 
+      messages, 
+      setMessages, 
+      addMessage, 
+      clearMessages, 
+      searchHistory, 
+      addToSearchHistory 
+    }}>
       {children}
     </ChatContext.Provider>
   );

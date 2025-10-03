@@ -156,3 +156,49 @@ export const getTags = (movie: Movie): string[] => {
   
   return tags.slice(0, 3); // Limit to 3 tags
 };
+
+export const getRecommendations = (movies: Movie[], searchHistory: string[], currentMovie?: Movie): Movie[] => {
+  if (searchHistory.length === 0 && !currentMovie) return [];
+  
+  const scoredMovies = movies.map(movie => {
+    let score = 0;
+    
+    // Score based on search history
+    searchHistory.forEach(query => {
+      const lowerQuery = query.toLowerCase();
+      if (movie.title.toLowerCase().includes(lowerQuery)) score += 5;
+      if (movie.genres?.toLowerCase().includes(lowerQuery)) score += 3;
+      if (movie.director?.toLowerCase().includes(lowerQuery)) score += 4;
+      if (movie.cast?.toLowerCase().includes(lowerQuery)) score += 2;
+    });
+    
+    // Score based on current movie similarity
+    if (currentMovie) {
+      const currentGenres = currentMovie.genres?.toLowerCase().split(',').map(g => g.trim()) || [];
+      const movieGenres = movie.genres?.toLowerCase().split(',').map(g => g.trim()) || [];
+      
+      currentGenres.forEach(genre => {
+        if (movieGenres.includes(genre)) score += 3;
+      });
+      
+      if (movie.director === currentMovie.director) score += 5;
+      
+      const yearDiff = Math.abs(
+        new Date(movie.release_date).getFullYear() - 
+        new Date(currentMovie.release_date).getFullYear()
+      );
+      if (yearDiff <= 5) score += 2;
+      
+      // Don't recommend the same movie
+      if (movie.id === currentMovie.id) score = -1;
+    }
+    
+    return { movie, score };
+  });
+  
+  return scoredMovies
+    .filter(({ score }) => score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 6)
+    .map(({ movie }) => movie);
+};
