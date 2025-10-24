@@ -14,13 +14,89 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      movie_embeddings: {
+        Row: {
+          content: string
+          created_at: string | null
+          embedding: string | null
+          id: string
+          metadata: Json | null
+          movie_id: string
+          title: string
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          embedding?: string | null
+          id?: string
+          metadata?: Json | null
+          movie_id: string
+          title: string
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          embedding?: string | null
+          id?: string
+          metadata?: Json | null
+          movie_id?: string
+          title?: string
+        }
+        Relationships: []
+      }
+      user_preferences: {
+        Row: {
+          created_at: string | null
+          genres: string[] | null
+          id: string
+          interaction_type: string
+          movie_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          genres?: string[] | null
+          id?: string
+          interaction_type: string
+          movie_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          genres?: string[] | null
+          id?: string
+          interaction_type?: string
+          movie_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_personalized_movies: {
+        Args: { p_limit?: number; p_user_id: string }
+        Returns: {
+          genres: string[]
+          interaction_count: number
+        }[]
+      }
+      match_movies: {
+        Args: {
+          match_count?: number
+          match_threshold?: number
+          query_embedding: string
+        }
+        Returns: {
+          content: string
+          metadata: Json
+          movie_id: string
+          similarity: number
+          title: string
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
