@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ExternalLink, Calendar, User, Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { MovieActions } from './MovieActions';
 
 interface MovieCardProps {
   movie: Movie;
@@ -105,6 +106,12 @@ export const MovieCard = ({ movie, className = "" }: MovieCardProps) => {
             <ExternalLink className="h-4 w-4" />
           </Link>
         </Button>
+        
+        {/* Movie Actions for personalization */}
+        <MovieActions 
+          movieId={movie.id} 
+          genres={movie.genres ? movie.genres.split(', ') : []} 
+        />
       </div>
     </div>
   );

@@ -79,7 +79,7 @@ export type Database = {
       get_personalized_movies: {
         Args: { p_limit?: number; p_user_id: string }
         Returns: {
-          genres: string[]
+          genre: string
           interaction_count: number
         }[]
       }

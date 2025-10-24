@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Send, Dice6, Sparkles, Heart, Zap, Baby, Trash2, Bot } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { semanticSearch, trackMovieInteraction, getUserPreferredGenres } from '@/utils/embeddingUtils';
 
 export const MovieChatbot = () => {
   const { movies, loading } = useMovies();
@@ -72,6 +73,46 @@ export const MovieChatbot = () => {
     const input = userInput.toLowerCase();
     let responseMovies: Movie[] = [];
     let responseText = '';
+
+    // Try semantic search first for better, personalized results
+    if (!input.includes('plot') && !input.includes('director') && 
+        !input.includes('cast') && !input.includes('genre of') && 
+        !input.includes('when was') && !input.includes('what is') && 
+        !input.includes('rating of') && !input.includes('surprise')) {
+      try {
+        console.log('Attempting semantic search with embeddings...');
+        const semanticResults = await semanticSearch(userInput);
+        
+        if (semanticResults.length > 0) {
+          // Get user's preferred genres for personalization
+          const preferredGenres = await getUserPreferredGenres();
+          
+          let personalizedText = '';
+          if (preferredGenres.length > 0) {
+            personalizedText = `🎯 Personalized for you! I noticed you like ${preferredGenres.slice(0, 3).join(', ')}.\n\n`;
+          }
+          
+          responseText = personalizedText + `🔍 Found ${semanticResults.length} movies that match your search perfectly:`;
+          responseMovies = semanticResults.slice(0, 6);
+          
+          // Track the interaction
+          if (semanticResults[0]) {
+            const genres = semanticResults[0].genres.split(', ');
+            await trackMovieInteraction(semanticResults[0].id, 'search', genres);
+          }
+
+          return {
+            id: Date.now().toString(),
+            type: 'bot',
+            content: responseText,
+            movies: responseMovies,
+            timestamp: new Date(),
+          };
+        }
+      } catch (error) {
+        console.log('Semantic search not available, falling back to keyword search:', error);
+      }
+    }
 
     // Check if user is asking for plot suggestions
     if (input.includes('plot') && (input.includes('suggest') || input.includes('idea') || input.includes('storyline'))) {
